@@ -1,10 +1,14 @@
 package edu.escuelaing.arep;
 
-public class HelloService implements RestService{
+import java.util.HashMap;
+import java.util.Map;
+
+public class HelloService implements RestService {
 
     @Override
     public String response(String request) {
-        return "{\"nombre\":\"Sebas\"}";
+        // Asumiendo que la solicitud tiene el formato: "name=<input_name>"
+        String[] requestParams = request.split("=");
+        return "{\"nombre\": \"" + requestParams[1] + "\"}";
     }
-    
 }

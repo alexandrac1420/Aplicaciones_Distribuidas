@@ -58,10 +58,11 @@ class ClientHandler implements Runnable {
                 out.println("Content-type: " + "application/json");
                 out.println();
                 out.println(SimpleWebServer.services.get("hello").response(fileRequested));
-
-
-        
-
+            } else if (method.equals("POST") && fileRequested.startsWith("/app")) {
+                out.println("HTTP/1.1 200 OK");
+                out.println("Content-type: " + "application/json");
+                out.println();
+                out.println(SimpleWebServer.services.get("hello").response(fileRequested));
             }
 
         } catch (IOException e) {
