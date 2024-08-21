@@ -130,7 +130,48 @@ The Simple Concurrent Web Server is designed to handle multiple HTTP client requ
 
 ![Class Diagram](https://github.com/alexandrac1420/Aplicaciones_Distribuidas/blob/master/out/diagrama/diagramaClases.png)
 
-The class diagram above illustrates the relationships between the key components in the Simple Concurrent Web Server.
+
+### Overview
+
+The class diagram for the Simple Concurrent Web Server project provides a detailed view of the components involved in handling HTTP requests and managing server operations. The primary classes include `SimpleWebServer`, `ClientHandler`, `RestService`, and its implementation `HelloService`.
+
+### Class Descriptions
+
+#### 1. **SimpleWebServer**
+   - **Role**: The `SimpleWebServer` class acts as the central controller of the server. It listens for incoming HTTP requests on a specific port (typically port 8080) and delegates the handling of these requests to `ClientHandler` instances.
+   - **Key Responsibilities**:
+     - **ServerSocket Management**: Maintains a `ServerSocket` that listens for client connections.
+     - **Concurrency Handling**: Utilizes a `Thread Pool (ExecutorService)` to manage multiple client connections concurrently.
+     - **Routing**: Routes incoming requests to the appropriate handler, which could be static file serving or REST API processing.
+
+#### 2. **ClientHandler**
+   - **Role**: The `ClientHandler` class is responsible for processing individual HTTP requests. It reads the request, determines the appropriate action (such as serving a static file or processing a REST API request), and returns the response to the client.
+   - **Key Responsibilities**:
+     - **Request Handling**: Parses HTTP requests and determines the type of response needed.
+     - **Static File Serving**: Serves static files like HTML, CSS, and images from the server’s resources.
+     - **REST API Processing**: Handles API requests by interacting with various services, such as the `HelloService`.
+
+#### 3. **RestService**
+   - **Role**: `RestService` is an abstract class or interface that defines the structure for handling RESTful API requests.
+   - **Key Responsibilities**:
+     - **Response Generation**: Provides a method to generate responses based on the requests received.
+
+#### 4. **HelloService**
+   - **Role**: The `HelloService` class implements the `RestService` interface and is specifically designed to handle requests directed at the `/hello` endpoint.
+   - **Key Responsibilities**:
+     - **Handling Specific Requests**: Responds to `/hello` requests with a pre-defined message or behavior.
+
+### Relationships Between Classes
+
+- **`SimpleWebServer` and `ClientHandler`**:
+  - The `SimpleWebServer` class uses the `ClientHandler` to process each incoming client request. The `ClientHandler` is instantiated and managed by the server, allowing it to handle requests in separate threads provided by the thread pool.
+  
+- **`SimpleWebServer` and `RestService`**:
+  - The `SimpleWebServer` class manages instances of `RestService`, routing requests that match certain patterns (like `/hello`) to the appropriate service. This allows for scalable and modular handling of different API endpoints.
+
+- **`RestService` and `HelloService`**:
+  - `HelloService` is a concrete implementation of `RestService`. It defines the specific behavior for the `/hello` endpoint, returning a greeting or other relevant information.
+
 
 ## Test Report - Simple Concurrent Web Server
 
