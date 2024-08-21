@@ -1,14 +1,22 @@
 package edu.escuelaing.arep;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 public class HelloService implements RestService {
 
     @Override
     public String response(String request) {
-        // Asumiendo que la solicitud tiene el formato: "name=<input_name>"
         String[] requestParams = request.split("=");
-        return "{\"nombre\": \"" + requestParams[1] + "\"}";
+        String decodedName = URLDecoder.decode(requestParams[1], StandardCharsets.UTF_8);
+        
+        // Formato JSON
+        String jsonResponse = "{\"nombre\": \"" + decodedName + "\"}";
+        
+        // Texto plano
+        String plainTextResponse = "Hola, " + decodedName;
+
+        // Concatenar ambos formatos
+        return jsonResponse + "<br />" + plainTextResponse;
     }
 }

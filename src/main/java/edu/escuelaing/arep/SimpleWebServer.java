@@ -10,20 +10,28 @@ public class SimpleWebServer {
     private static final int PORT = 8080;
     public static final String WEB_ROOT = "src/main/java/edu/escuelaing/arep/resources/";
     public static Map<String, RestService> services = new HashMap<>();
+    private static boolean running = true;
+
 
     public static void main(String[] args) throws IOException {
         ExecutorService threadPool = Executors.newFixedThreadPool(10);
         ServerSocket serverSocket = new ServerSocket(PORT);
         System.out.println("Ready to receive on port " + PORT + "...");
         addServices();
-        while (true) {
+        while (running) {
             Socket clientSocket = serverSocket.accept();
             threadPool.submit(new ClientHandler(clientSocket));
         }
+        serverSocket.close();
+        threadPool.shutdown();
     }
 
     private static void addServices() {
         services.put("hello", new HelloService());
+    }
+
+    public static void stop() {
+        running = false;
     }
 }
 
@@ -37,8 +45,8 @@ class ClientHandler implements Runnable {
     @Override
     public void run() {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedOutputStream dataOut = new BufferedOutputStream(clientSocket.getOutputStream())) {
+             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+             BufferedOutputStream dataOut = new BufferedOutputStream(clientSocket.getOutputStream())) {
 
             String requestLine = in.readLine();
             if (requestLine == null)
@@ -49,30 +57,30 @@ class ClientHandler implements Runnable {
 
             printRequestLine(requestLine, in);
 
-            if (method.equals("GET") && !fileRequested.startsWith("/app")) {
-                handleGetRequest(fileRequested, out, dataOut);
-            } else if (method.equals("POST") && !fileRequested.startsWith("/app")) {
-                handlePostRequest(fileRequested, out, dataOut);
-            } else if (method.equals("GET") && fileRequested.startsWith("/app")) {
-                out.println("HTTP/1.1 200 OK");
-                out.println("Content-type: " + "application/json");
-                out.println();
-                out.println(SimpleWebServer.services.get("hello").response(fileRequested));
-            } else if (method.equals("POST") && fileRequested.startsWith("/app")) {
-                out.println("HTTP/1.1 200 OK");
-                out.println("Content-type: " + "application/json");
-                out.println();
-                out.println(SimpleWebServer.services.get("hello").response(fileRequested));
+            if (fileRequested.startsWith("/app")) {
+                handleAppRequest(method, fileRequested, out);
+            } else {
+                if (method.equals("GET")) {
+                    handleGetRequest(fileRequested, out, dataOut);
+                } else if (method.equals("POST")) {
+                    handlePostRequest(fileRequested, out, dataOut);
+                }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                clientSocket.close(); // Cerrando el socket aquí, después de procesar la solicitud
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     private void printRequestLine(String requestLine, BufferedReader in) {
         System.out.println("Request line: " + requestLine);
-        String inputLine = "";
+        String inputLine;
         try {
             while ((inputLine = in.readLine()) != null) {
                 System.out.println("Header: " + inputLine);
@@ -83,13 +91,6 @@ class ClientHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    // Implementar de manera correcta
-
-    private void handlePostRequest(String fileRequested, PrintWriter out, BufferedOutputStream dataOut)
-            throws IOException {
-        handleGetRequest(fileRequested, out, dataOut);
     }
 
     private void handleGetRequest(String fileRequested, PrintWriter out, BufferedOutputStream dataOut)
@@ -115,6 +116,34 @@ class ClientHandler implements Runnable {
             out.println("<html><body><h1>File Not Found</h1></body></html>");
             out.flush();
         }
+    }
+
+    private void handlePostRequest(String fileRequested, PrintWriter out, BufferedOutputStream dataOut)
+            throws IOException {
+        StringBuilder payload = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null && !line.isEmpty()) {
+                payload.append(line);
+            }
+        }
+
+        out.println("HTTP/1.1 200 OK");
+        out.println("Content-type: text/html");
+        out.println();
+        out.println("<html><body><h1>POST data received:</h1>");
+        out.println("<p>" + payload.toString() + "</p>");
+        out.println("</body></html>");
+        out.flush();
+    }
+
+    private void handleAppRequest(String method, String fileRequested, PrintWriter out) {
+        out.println("HTTP/1.1 200 OK");
+        out.println("Content-type: application/json");
+        out.println();
+        String response = SimpleWebServer.services.get("hello").response(fileRequested);
+        out.println(response);
+        out.flush();
     }
 
     private String getContentType(String fileRequested) {

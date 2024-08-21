@@ -18,12 +18,16 @@ p {
 }
 
 .container {
-    max-width: 600px;
+    max-width: 1200px; /* Ampliado para acomodar ambos recuadros */
     margin: 0 auto;
     padding: 20px;
     background-color: #e6e0f8;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 img {
@@ -51,4 +55,40 @@ button:hover {
 #result {
     margin-top: 20px;
     font-weight: bold;
+}
+
+.box {
+    background-color: #f3e5f5;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    text-align: center;
+    width: 45%;
+}
+
+.box img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.box input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.box button {
+    padding: 10px 20px;
+    background-color: #7e57c2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.box button:hover {
+    background-color: #5e35b1;
 }

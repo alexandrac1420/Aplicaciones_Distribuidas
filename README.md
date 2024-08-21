@@ -1,6 +1,7 @@
-﻿# Concurrent Web Server
+﻿# Simple Concurrent Web Server
 
-This project implements a concurrent HTTP server in Java that serves static files from a specified directory. The server handles multiple client requests concurrently using a fixed-size thread pool.
+This project implements a concurrent HTTP server in Java that serves static files from a specified directory and handles multiple client requests concurrently using a fixed-size thread pool.
+
 
 ## Getting Started
 
@@ -55,9 +56,9 @@ You need to install the following tools and configure their dependencies:
 
 1. Clone the repository and navigate into the project directory:
     ```sh
-    git clone https://github.com/alexandrac1420/Concurrent_Web_Server.git
+    git clone https://github.com/alexandrac1420/Aplicaciones_Distribuidas.git
 
-    cd Concurrencia
+    cd Aplicaciones_Distribuidas
     ```
 
 2. Build the project:
@@ -67,87 +68,111 @@ You need to install the following tools and configure their dependencies:
 
     Should display output similar to:
     ```sh
-    [INFO] --- jar:3.3.0:jar (default-jar) @ Concurrencia ---
-    [INFO] Building jar: C:\Users\alexa\Concurrencia\target\Concurrencia-1.0-SNAPSHOT.jar
+    [INFO] --- jar:3.3.0:jar (default-jar) @ AplicacionesDistriuidas ---
+    [INFO] Building jar: C:\Users\alexa\OneDrive\Escritorio\Aplicaciones_Distribuidas\target\AplicacionesDistriuidas-1.0-SNAPSHOT.jar
     [INFO] BUILD SUCCESS
     ```
 
 3. Run the application:
     ```sh
-    java -cp target/Concurrencia-1.0-SNAPSHOT.jar edu.escuelaing.arsw.HttpServer_Exercise6Concurrent
+    java -cp target/AplicacionesDistriuidas-1.0-SNAPSHOT.jar edu.escuelaing.arep.SimpleWebServer
     ```
     When running the application, the following message should appear
 
-    ![alt text](https://github.com/alexandrac1420/Concurrent_Web_Server/blob/master/Pictures/image-3.png)
+    ```
+    Ready to receive on port 8080...
+    ```
 
-    And now you can access index.html and the .jpg image.
-    
-    ![alt text](https://github.com/alexandrac1420/Concurrent_Web_Server/blob/master/Pictures/image-4.png)
+    And now you can access `index.html` and other static files.
 
     
-## Test Report - MeanStdDevCalculator
+## Architecture
+
+![Architecture Diagram](out\diagrama\diagrama.png)
+
+### Overview
+
+The Simple Concurrent Web Server is designed to handle multiple HTTP client requests concurrently using a thread pool. The server is capable of serving static files and processing simple REST-like API requests.
+
+### Components
+
+#### 1. **SimpleWebServer**
+   - **Role**: This is the main class of the server. It initializes a `ServerSocket` on a specified port and listens for incoming client connections. The server uses a fixed-size thread pool (`ExecutorService`) to handle each client request concurrently.
+   - **Responsibilities**:
+     - Accept incoming client connections.
+     - Delegate the handling of each client connection to a `ClientHandler`.
+     - Manage the lifecycle of the server, including startup and shutdown.
+
+#### 2. **ClientHandler**
+   - **Role**: This class is responsible for processing individual client requests. It implements the `Runnable` interface, allowing it to be executed in a separate thread by the thread pool.
+   - **Responsibilities**:
+     - Read and parse the HTTP request from the client.
+     - Serve static files from the specified directory or handle REST-like API requests.
+     - Send appropriate HTTP responses back to the client, including handling errors such as "404 Not Found".
+     - Close the client socket after processing the request to ensure no resource leaks.
+
+### Interaction Flow
+
+1. **Server Initialization**: The `SimpleWebServer` starts and initializes a `ServerSocket` on port 8080. It also sets up a thread pool with a fixed number of threads.
+
+2. **Request Handling**:
+   - When a client sends an HTTP request, the server accepts the connection and creates a new `ClientHandler` instance.
+   - The `ClientHandler` reads the request, determines whether it’s a request for a static file or a REST-like API request, and processes it accordingly.
+   - The appropriate response (file content, JSON response, or an error message) is sent back to the client.
+
+3. **Concurrency**: Multiple client requests are handled concurrently by the thread pool, allowing the server to efficiently manage several connections at the same time.
+
+4. **Shutdown**: When the server needs to be stopped, it gracefully shuts down the thread pool and closes the server socket.
+
+### Class Diagram
+
+![Class Diagram](out\diagrama\diagramaClases.png)
+
+The class diagram above illustrates the relationships between the key components in the Simple Concurrent Web Server.
+
+## Test Report - Simple Concurrent Web Server
 
 ### Author
 Name: Alexandra Cortes Tovar
 
 ### Date
-Date: 22/06/2024
+Date: 21/08/2024
 
 ### Summary
-This report outlines the unit tests conducted for the Concurrent Web Server project. Each test aimed to validate specific functionalities and behaviors of the server under various conditions.
+This report outlines the unit tests conducted for the Simple Concurrent Web Server project. Each test aimed to validate specific functionalities and behaviors of the server under various conditions.
 
 ### Tests Conducted
 
-1. **Test `testConcurrentRequests`**
-   - **Description**: Validates the server's ability to handle concurrent requests from multiple clients.
-   - **Objective**: Ensure the server manages simultaneous connections effectively using a fixed thread pool.
-   - **Testing Scenario**: Clients simulate HTTP GET requests for index.html.
-   - **Expected Behavior**: The server should respond with HTTP/1.1 200 OK and appropriate Content-Type headers for index.html.
-   - **Verification**: Confirms that all client threads receive the correct response with the expected content.
+1. **Test `testHelloServiceResponse`**
+   - **Description**: Validates the server's ability to handle requests to the REST-like hello service.
+   - **Objective**: Ensure the server responds correctly with a greeting message when receiving GET requests at `/hello`.
+   - **Testing Scenario**: Clients simulate HTTP GET requests to `/hello`.
+   - **Expected Behavior**: The server should respond with `HTTP/1.1 200 OK` and the message "Hello, World!".
+   - **Verification**: Confirms that all clients receive the correct response with the expected content.
 
-![Tests Result](https://github.com/alexandrac1420/Concurrent_Web_Server/blob/master/Pictures/image.png)
+2. **Test `testStaticFileRequest`**
+   - **Description**: Checks the server's capability to serve static files.
+   - **Objective**: Ensure that the server correctly serves files like `index.html` and images from the designated directory.
+   - **Testing Scenario**: Multiple clients request static files simultaneously.
+   - **Expected Behavior**: The server should respond with `HTTP/1.1 200 OK`, the correct `Content-Type`, and the file content.
+   - **Verification**: Validates that the file is served correctly to all requesting clients.
 
-## Design 
-
-### Title
-Concurrent Web Server
-
-### Author
-Alexandra Cortes Tovar
-
-### Date
-22/06/2024
-
-### Class Diagram
-![Class Diagram](https://github.com/alexandrac1420/Concurrent_Web_Server/blob/master/Pictures/image-2.png)
-
-### Description of Class Diagram
-
-#### Class `HttpServer_Exercise6Concurrent`
-- **Description**: This class represents the concurrent HTTP server.
-- **Operations**:
-  - `public static void startServer(int port)`: Starts the server on the given port, accepting client connections and processing them using a thread pool.
-  - `public static void stopServer()`: Stops the server and shuts down the thread pool.
-  - `public static void main(String[] args)`: Main method that starts the server, calling the `startServer` method with a predefined port.
-
-#### Class `ClientHandler`
-- **Description**: This class handles individual client requests.
-- **Operations**:
-  - `public ClientHandler(Socket clientSocket)`: Constructor that initializes the client socket.
-  - `public void run()`: Method that runs the client request handling logic.
-  - `private void handleRequest(Socket clientSocket)`: Private method that processes the HTTP request and sends the appropriate response.
-
-#### Relationships Between Classes
-- `HttpServer_Exercise6Concurrent` has an use relationship with `ClientHandler` because it creates instances of `ClientHandler` to handle client requests.The instances are executed via the `executorService` to manage multiple client connections concurrently.
+3. **Test `test404NotFound`**
+   - **Description**: Tests the server's behavior when a requested file does not exist.
+   - **Objective**: Ensure the server responds with a `404 Not Found` status for non-existent resources.
+   - **Testing Scenario**: A client requests a file that is not present in the server's root directory.
+   - **Expected Behavior**: The server should respond with `HTTP/1.1 404 Not Found` and an appropriate error message.
+   - **Verification**: Confirms that the server handles missing resources correctly.
 
 ## Built With
+
 
 * [Maven](https://maven.apache.org/) - Dependency Management
 * [Git](http://git-scm.com/) - Version Control System
 
 ## Versioning
 
-I use [GitHub](https://github.com/) for versioning. For the versions available, see the [tags on this repository](https://github.com/alexandrac1420/Concurrent_Web_Server.git).
+I use [GitHub](https://github.com/) for versioning. For the versions available, see the [tags on this repository](https://github.com/alexandrac1420/Aplicaciones_Distribuidas.git).
 
 ## Authors
 
