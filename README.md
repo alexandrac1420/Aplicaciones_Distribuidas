@@ -88,7 +88,7 @@ You need to install the following tools and configure their dependencies:
     
 ## Architecture
 
-![Architecture Diagram](out\diagrama\diagrama.png)
+![Architecture Diagram](https://github.com/alexandrac1420/Aplicaciones_Distribuidas/blob/master/out/diagrama/diagrama.png)
 
 ### Overview
 
@@ -126,7 +126,7 @@ The Simple Concurrent Web Server is designed to handle multiple HTTP client requ
 
 ### Class Diagram
 
-![Class Diagram](out\diagrama\diagramaClases.png)
+![Class Diagram](https://github.com/alexandrac1420/Aplicaciones_Distribuidas/blob/master/out/diagrama/diagramaClases.png)
 
 The class diagram above illustrates the relationships between the key components in the Simple Concurrent Web Server.
 
