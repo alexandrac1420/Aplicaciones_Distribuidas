@@ -2,6 +2,8 @@
 
 This project implements a concurrent HTTP server in Java that serves static files from a specified directory and handles multiple client requests concurrently using a fixed-size thread pool.
 
+![Demo GIF](https://github.com/alexandrac1420/Aplicaciones_Distribuidas/blob/master/out/diagrama/diagrama.png)
+
 
 ## Getting Started
 
