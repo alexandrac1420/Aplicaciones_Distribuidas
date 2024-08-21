@@ -126,7 +126,9 @@ The Simple Concurrent Web Server is designed to handle multiple HTTP client requ
 
 4. **Shutdown**: When the server needs to be stopped, it gracefully shuts down the thread pool and closes the server socket.
 
-### Class Diagram
+
+
+## Class Diagram
 
 ![Class Diagram](https://github.com/alexandrac1420/Aplicaciones_Distribuidas/blob/master/out/diagrama/diagramaClases.png)
 
