@@ -27,17 +27,16 @@ public class AppTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        // No detener el servidor después de cada prueba
     }
 
     @Override
     protected void finalize() throws Throwable {
-        stopServer(); // Detener el servidor al final de todas las pruebas
+        stopServer(); 
         super.finalize();
     }
 
     private static void startServer() throws Exception {
-        executorService = Executors.newFixedThreadPool(5); // Pool de hilos para manejar la concurrencia
+        executorService = Executors.newFixedThreadPool(5);
         serverThread = new Thread(() -> {
             try {
                 SimpleWebServer.main(null);
@@ -47,7 +46,7 @@ public class AppTest extends TestCase {
         });
         serverThread.start();
 
-        // Esperar y verificar que el servidor esté en funcionamiento
+
         boolean isServerUp = false;
         int retries = 10;
         while (retries > 0 && !isServerUp) {
@@ -61,7 +60,7 @@ public class AppTest extends TestCase {
                 }
                 conn.disconnect();
             } catch (Exception e) {
-                Thread.sleep(1000); // Espera un segundo antes de reintentar
+                Thread.sleep(1000); 
             }
             retries--;
         }
@@ -70,14 +69,14 @@ public class AppTest extends TestCase {
             throw new IllegalStateException("El servidor no se pudo iniciar correctamente.");
         }
 
-        isServerStarted = true; // Marcar el servidor como iniciado
+        isServerStarted = true; 
     }
 
     private static void stopServer() throws Exception {
-        SimpleWebServer.stop(); // Detener el servidor
-        executorService.shutdownNow(); // Detener el pool de hilos
+        SimpleWebServer.stop(); 
+        executorService.shutdownNow(); 
         if (serverThread != null) {
-            serverThread.join(5000); // Espera hasta 5 segundos a que el hilo del servidor termine
+            serverThread.join(5000); 
         }
         isServerStarted = false;
     }
@@ -118,7 +117,7 @@ public class AppTest extends TestCase {
                 e.printStackTrace();
                 fail("Conexión fallida: " + e.getMessage());
             }
-        }).get();  // Espera a que la tarea se complete
+        }).get();  
     }
 
     public void testInvalidRequest() throws Exception {
@@ -134,7 +133,7 @@ public class AppTest extends TestCase {
                 e.printStackTrace();
                 fail("Conexión fallida: " + e.getMessage());
             }
-        }).get();  // Espera a que la tarea se complete
+        }).get();  
     }
 
     public void testMultipleConnections() throws Exception {

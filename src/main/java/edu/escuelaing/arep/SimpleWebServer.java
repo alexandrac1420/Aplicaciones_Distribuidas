@@ -141,11 +141,9 @@ class ClientHandler implements Runnable {
 
         String response;
         if (method.equals("GET")) {
-            // Extraer la parte relevante después de "/app/" para pasar a HelloService
             String serviceRequest = fileRequested.substring(fileRequested.indexOf("/app/") + 5);
             response = SimpleWebServer.services.get("hello").response(serviceRequest);
         } else if (method.equals("POST")) {
-            // Aquí podrías agregar lógica específica para manejar POST si es diferente
             String serviceRequest = fileRequested.substring(fileRequested.indexOf("/app/") + 5);
             response = SimpleWebServer.services.get("hello").response(serviceRequest);
         } else {
