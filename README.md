@@ -184,30 +184,41 @@ Name: Alexandra Cortes Tovar
 Date: 21/08/2024
 
 ### Summary
-This report outlines the unit tests conducted for the Simple Concurrent Web Server project. Each test aimed to validate specific functionalities and behaviors of the server under various conditions.
+This report outlines the unit tests conducted for the Simple Concurrent Web Server project. Each test aimed to validate specific functionalities and behaviors of the server under various conditions. The server was tested for its ability to handle REST-like services, serve static files, handle missing resources, and manage multiple concurrent connections.
 
 ### Tests Conducted
 
 1. **Test `testHelloServiceResponse`**
    - **Description**: Validates the server's ability to handle requests to the REST-like hello service.
-   - **Objective**: Ensure the server responds correctly with a greeting message when receiving GET requests at `/hello`.
-   - **Testing Scenario**: Clients simulate HTTP GET requests to `/hello`.
-   - **Expected Behavior**: The server should respond with `HTTP/1.1 200 OK` and the message "Hello, World!".
-   - **Verification**: Confirms that all clients receive the correct response with the expected content.
+   - **Objective**: Ensure the server responds correctly with a greeting message when receiving GET requests at `/app/hello`.
+   - **Testing Scenario**: Clients simulate HTTP GET requests to `/app/hello?name=World`.
+   - **Expected Behavior**: The server should respond with `HTTP/1.1 200 OK` and a JSON message containing the greeting, such as `{"nombre": "World"}` and `Hola, World`.
+   - **Verification**: Confirms that the response contains the correct content, validating the server's processing of dynamic requests.
 
-2. **Test `testStaticFileRequest`**
+2. **Test `testLoadStaticFile`**
    - **Description**: Checks the server's capability to serve static files.
-   - **Objective**: Ensure that the server correctly serves files like `index.html` and images from the designated directory.
-   - **Testing Scenario**: Multiple clients request static files simultaneously.
-   - **Expected Behavior**: The server should respond with `HTTP/1.1 200 OK`, the correct `Content-Type`, and the file content.
-   - **Verification**: Validates that the file is served correctly to all requesting clients.
+   - **Objective**: Ensure that the server correctly serves files like `index.html` from the designated directory.
+   - **Testing Scenario**: A client requests the `index.html` file from the server.
+   - **Expected Behavior**: The server should respond with `HTTP/1.1 200 OK` and the correct content of the `index.html` file.
+   - **Verification**: Validates that the file is served correctly, ensuring the server can handle static file requests.
 
-3. **Test `test404NotFound`**
+3. **Test `testInvalidRequest`**
    - **Description**: Tests the server's behavior when a requested file does not exist.
    - **Objective**: Ensure the server responds with a `404 Not Found` status for non-existent resources.
-   - **Testing Scenario**: A client requests a file that is not present in the server's root directory.
+   - **Testing Scenario**: A client requests a file that is not present in the server's root directory, such as `nonexistentfile.html`.
    - **Expected Behavior**: The server should respond with `HTTP/1.1 404 Not Found` and an appropriate error message.
-   - **Verification**: Confirms that the server handles missing resources correctly.
+   - **Verification**: Confirms that the server handles missing resources correctly, maintaining proper HTTP status codes.
+
+4. **Test `testMultipleConnections`**
+   - **Description**: Evaluates the server's ability to handle multiple concurrent connections.
+   - **Objective**: Ensure the server can process multiple requests simultaneously without errors or significant performance degradation.
+   - **Testing Scenario**: Five clients simultaneously request the `index.html` file from the server.
+   - **Expected Behavior**: The server should respond with `HTTP/1.1 200 OK` and the correct content for each request, handling all connections efficiently.
+   - **Verification**: Confirms that the server maintains performance and correctness under concurrent load.
+
+### Conclusion
+The Simple Concurrent Web Server was rigorously tested across multiple scenarios to ensure it meets the expected behavior under various conditions. These tests validate the server's capability to handle dynamic and static content requests, manage errors gracefully, and support concurrent client connections.
+
 
 ## Built With
 
