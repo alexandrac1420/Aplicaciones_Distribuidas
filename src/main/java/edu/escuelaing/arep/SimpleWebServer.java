@@ -12,7 +12,6 @@ public class SimpleWebServer {
     public static Map<String, RestService> services = new HashMap<>();
     private static boolean running = true;
 
-
     public static void main(String[] args) throws IOException {
         ExecutorService threadPool = Executors.newFixedThreadPool(10);
         ServerSocket serverSocket = new ServerSocket(PORT);
@@ -45,8 +44,8 @@ class ClientHandler implements Runnable {
     @Override
     public void run() {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-             BufferedOutputStream dataOut = new BufferedOutputStream(clientSocket.getOutputStream())) {
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                BufferedOutputStream dataOut = new BufferedOutputStream(clientSocket.getOutputStream())) {
 
             String requestLine = in.readLine();
             if (requestLine == null)
@@ -82,16 +81,14 @@ class ClientHandler implements Runnable {
         System.out.println("Request line: " + requestLine);
         String inputLine;
         try {
-            while ((inputLine = in.readLine()) != null) {
+            while ((inputLine = in.readLine()) != null && !inputLine.isEmpty()) {
                 System.out.println("Header: " + inputLine);
-                if (in.ready()) {
-                    break;
-                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    
 
     private void handleGetRequest(String fileRequested, PrintWriter out, BufferedOutputStream dataOut)
             throws IOException {
@@ -139,9 +136,23 @@ class ClientHandler implements Runnable {
 
     private void handleAppRequest(String method, String fileRequested, PrintWriter out) {
         out.println("HTTP/1.1 200 OK");
-        out.println("Content-type: application/json");
+        out.println("Content-type: text/html");
         out.println();
-        String response = SimpleWebServer.services.get("hello").response(fileRequested);
+
+        String response;
+        if (method.equals("GET")) {
+            // Extraer la parte relevante después de "/app/" para pasar a HelloService
+            String serviceRequest = fileRequested.substring(fileRequested.indexOf("/app/") + 5);
+            response = SimpleWebServer.services.get("hello").response(serviceRequest);
+        } else if (method.equals("POST")) {
+            // Aquí podrías agregar lógica específica para manejar POST si es diferente
+            String serviceRequest = fileRequested.substring(fileRequested.indexOf("/app/") + 5);
+            response = SimpleWebServer.services.get("hello").response(serviceRequest);
+        } else {
+            response = "{\"error\": \"Unsupported HTTP method\"}<br />Unsupported HTTP method";
+            out.println("HTTP/1.1 405 Method Not Allowed");
+        }
+
         out.println(response);
         out.flush();
     }
