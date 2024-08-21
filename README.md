@@ -215,6 +215,9 @@ This report outlines the unit tests conducted for the Simple Concurrent Web Serv
    - **Testing Scenario**: Five clients simultaneously request the `index.html` file from the server.
    - **Expected Behavior**: The server should respond with `HTTP/1.1 200 OK` and the correct content for each request, handling all connections efficiently.
    - **Verification**: Confirms that the server maintains performance and correctness under concurrent load.
+  
+![image](https://github.com/user-attachments/assets/edaa41a8-25f6-44f6-8759-c3c282201636)
+
 
 ### Conclusion
 The Simple Concurrent Web Server was rigorously tested across multiple scenarios to ensure it meets the expected behavior under various conditions. These tests validate the server's capability to handle dynamic and static content requests, manage errors gracefully, and support concurrent client connections.
